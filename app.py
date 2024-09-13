@@ -2,11 +2,23 @@ import streamlit as st
 import tensorflow as tf
 from PIL import Image, ImageOps
 import numpy as np
+import gdown
+import os
 
-# Load the trained model (ensure 'pneumonia_model.keras' is in the same directory)
+# Function to download model from Google Drive and load it
 @st.cache_resource
 def load_model():
-    model = tf.keras.models.load_model('pneumonia_model.keras')  # Load .keras model
+    model_path = 'pneumonia_model.keras'
+    
+    # Check if model file already exists to avoid re-downloading
+    if not os.path.exists(model_path):
+        # Use the constructed direct download URL
+        url = 'https://drive.google.com/uc?id=1flu22g_6tJkC0OPrNZvRq65EVUkxadnW'
+        output = model_path
+        gdown.download(url, output, quiet=False)
+    
+    # Load the model
+    model = tf.keras.models.load_model(model_path)
     return model
 
 model = load_model()
@@ -15,8 +27,8 @@ model = load_model()
 def predict_pneumonia(image):
     # Resize and preprocess the image
     size = (150, 150)  # Assuming input size of the model is 150x150
-    image = ImageOps.fit(image, size, Image.ANTIALIAS)  # Resize image to match input size
-    img_array = np.asarray(image)                       # Convert image to numpy array
+    image = ImageOps.fit(image, size, Image.ANTIALIAS)  # Resize image
+    img_array = np.asarray(image)                       # Convert to numpy array
     img_array = img_array / 255.0                       # Normalize pixel values
     img_array = np.expand_dims(img_array, axis=0)       # Add batch dimension
 
