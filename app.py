@@ -3,10 +3,10 @@ import tensorflow as tf
 from PIL import Image, ImageOps
 import numpy as np
 
-# Load the trained model (ensure 'pneumonia_model.h5' is in the same directory)
+# Load the trained model (ensure 'pneumonia_model.keras' is in the same directory)
 @st.cache_resource
 def load_model():
-    model = tf.keras.models.load_model('pneumonia_model.h5')
+    model = tf.keras.models.load_model('pneumonia_model.keras')  # Load .keras model
     return model
 
 model = load_model()
@@ -15,7 +15,7 @@ model = load_model()
 def predict_pneumonia(image):
     # Resize and preprocess the image
     size = (150, 150)  # Assuming input size of the model is 150x150
-    image = ImageOps.fit(image, size, Image.ANTIALIAS)  # Resize the image to match the input size
+    image = ImageOps.fit(image, size, Image.ANTIALIAS)  # Resize image to match input size
     img_array = np.asarray(image)                       # Convert image to numpy array
     img_array = img_array / 255.0                       # Normalize pixel values
     img_array = np.expand_dims(img_array, axis=0)       # Add batch dimension
